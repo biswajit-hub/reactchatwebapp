@@ -3,8 +3,11 @@ import { useChatStore } from "../../lib/chatStore";
 import { auth, db } from "../../lib/firebase";
 import { useUserStore } from "../../lib/userStore";
 import "./detail.css"
+import { useState } from "react";
 
 const Detail = () => {
+    const [ sharedPhotoMode, setSharedPhotoMode ] = useState(false);
+
     const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, changeBlock } = useChatStore();
     const { currentUser } = useUserStore();
 
@@ -26,10 +29,27 @@ const Detail = () => {
         }
     }
 
+    const handleLogout = () => {
+        auth.signOut();
+
+    }
+
+    const handleSharedPhoto = () => {
+        setSharedPhotoMode(!sharedPhotoMode);
+        // const photos = document.querySelectorAll('.photos');
+        const photos = document.querySelector('.photos');
+        if(sharedPhotoMode){
+            photos.style.display = "none";
+        }else{
+            photos.style.display = "flex";
+        }
+        // console.log(photos);
+    }
+
     return (
         <div className="detail">
             <div className="user">
-                <img src={user?.avarat || "./avatar.png"} alt="" />
+                <img src={user?.avatar || "./avatar.png"} alt="" />
                 <h2>{user?.username}</h2>
                 <p>Lorem ipsum dolor sit.</p>
             </div>
@@ -49,7 +69,7 @@ const Detail = () => {
                 <div className="option">
                     <div className="title">
                         <span>Shared Photos</span>
-                        <img src="./arrowDown.png" alt="" />
+                        <img src={sharedPhotoMode?  "./arrowDown.png" : "./arrowUp.png"} alt="" onClick={handleSharedPhoto}/>
                     </div>
                     <div className="photos">
                         <div className="photoItem">
@@ -99,7 +119,7 @@ const Detail = () => {
                         : 
                             "Block User"
                     }</button>
-                <button className="logout" onClick={() => auth.signOut()}>Logout</button>
+                <button className="logout" onClick={handleLogout}>Logout</button>
             </div>
         </div>
     )

@@ -5,8 +5,8 @@ import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  // apiKey: "AIzaSyCzLPf24NUuzjl7doOC6GeB8YVn8gFNzmM",
+  // apiKey: import.meta.env.VITE_API_KEY,
+  apiKey: "AIzaSyCzLPf24NUuzjl7doOC6GeB8YVn8gFNzmM",
   authDomain: "reactchatapllication.firebaseapp.com",
   projectId: "reactchatapllication",
   storageBucket: "reactchatapllication.appspot.com",

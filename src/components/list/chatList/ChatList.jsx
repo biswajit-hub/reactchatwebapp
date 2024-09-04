@@ -17,10 +17,12 @@ const ChatList = () => {
         const unSub = onSnapshot(
             doc(db, "userchats", currentUser.id), 
             async (res) => {
+            if (!res.data()) return;
             const items = res.data().chats;
+            console.log(items);
 
             const promises = items.map(async (item)=>{
-                const UserDocRef = doc(db, "users", item.recieverId);
+                const UserDocRef = doc(db, "users", item.receiverId);
                 const UserDocSnap = await getDoc(UserDocRef);
 
                 const user = UserDocSnap.data();
@@ -98,7 +100,7 @@ const ChatList = () => {
                 </div>
             ))}
             
-            {addMode && <AddUser />}
+            {addMode && <AddUser chats={chats} />}
         </div>
     )
 }

@@ -3,8 +3,11 @@ import "./addUser.css"
 import { db } from "../../../../lib/firebase";
 import { useState } from "react";
 import { useUserStore } from "../../../../lib/userStore";
+import { toast } from "react-toastify";
 
-const AddUser = () => {
+const AddUser = ({chats}) => {
+    const [loading, setLoading] = useState(false);
+
     const [user, setUser] = useState(null);
     const {currentUser} = useUserStore();
     const handleSearch = async (e) => {
@@ -28,6 +31,28 @@ const AddUser = () => {
     }
 
     const handleAdd = async (e) => {
+        e.target.disable = true;
+        e.target.style.cursor = "not-allowed";
+        // e.target.style.display = "none";
+        setLoading(true);
+        console.log('chats::',chats);
+        // let boolvar = false;
+        // chats.forEach((chat) => {
+        //     if (chat.receiverId === user.id){
+        //         toast.info("User Already Added!")
+        //         boolvar = true;
+        //         return;
+        //     }
+        // })
+        if(chats.some(chat => chat.receiverId === user.id)){
+            toast.info("User Already Added!")
+            setLoading(false);
+            e.target.disable = false;
+            e.target.style.cursor = "pointer";
+            // e.target.style.display = "";
+            return;
+        }
+        console.log('user::',user);
         const chatRef = collection(db, "chats");
         const userChatRef = collection(db, "userchats");
 
@@ -42,7 +67,7 @@ const AddUser = () => {
                 chats:arrayUnion({
                     chatId: newChatRef.id,
                     lastMessage: "",
-                    recieverId: currentUser.id,
+                    receiverId: currentUser.id,
                     updatedAt: Date.now(),
                 }),
             });
@@ -51,13 +76,18 @@ const AddUser = () => {
                 chats:arrayUnion({
                     chatId: newChatRef.id,
                     lastMessage: "",
-                    recieverId: user.id,
+                    receiverId: user.id,
                     updatedAt: Date.now(),
                 }),
             });
 
         } catch (err) {
             console.log(err);
+        } finally {
+            e.target.disable = false;
+            e.target.style.cursor = "pointer";
+            // e.target.style.display = "";
+            setLoading(false)
         }
 
     }
@@ -73,7 +103,7 @@ const AddUser = () => {
                     <img src={user.avatar || "./avatar.png"} alt="" />
                     <span>{user.username}</span>
                 </div>
-                <button onClick={handleAdd}>Add User</button>
+                <button onClick={handleAdd} disabled={loading}>{loading ? "Loading...":"Add User"}</button>
             </div>}
         </div>
     )

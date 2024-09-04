@@ -45,8 +45,10 @@ const Login = () => {
         const {username, email, password} = Object.fromEntries(formData)
         try{
             const res = await createUserWithEmailAndPassword(auth, email, password)
-
-            const imgUrl = await upload(avatar.file)
+            let imgUrl = "";
+            if(avatar.file){
+                imgUrl = await upload(avatar.file);
+            }
 
             await setDoc(doc(db, "users", res.user.uid), {
                 username,
